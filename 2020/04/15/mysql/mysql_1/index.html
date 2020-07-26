@@ -1,0 +1,406 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>mysql从入门到跑路 | 魔都叛徒博客</title><meta name="description" content="mysql从入门到跑路"><meta name="keywords" content="mysql"><meta name="author" content="魔都叛徒"><meta name="copyright" content="魔都叛徒"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="mysql从入门到跑路"><meta name="twitter:description" content="mysql从入门到跑路"><meta name="twitter:image" content="https://picsum.photos/seed/825/1920/1080"><meta property="og:type" content="article"><meta property="og:title" content="mysql从入门到跑路"><meta property="og:url" content="http://blog.modupantu.top/2020/04/15/mysql/mysql_1/"><meta property="og:site_name" content="魔都叛徒博客"><meta property="og:description" content="mysql从入门到跑路"><meta property="og:image" content="https://picsum.photos/seed/825/1920/1080"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'true'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://blog.modupantu.top/2020/04/15/mysql/mysql_1/"><link rel="next" title="为什么代码没有按照编写顺序执行？" href="http://blog.modupantu.top/2019/05/03/fornt/为什么代码没有按照编写顺序执行/"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: '',
+  enable_page_level_ads: 'true'
+});</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":100,"cookieDomain":"http://blog.modupantu.top/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: {"languages":{"author":"作者: 魔都叛徒","link":"链接: http://blog.modupantu.top/2020/04/15/mysql/mysql_1/","source":"来源: 魔都叛徒博客","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  baiduPush: false,
+  isHome: false,
+  isPost: true
+  
+}</script></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">魔都叛徒博客</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> Categories</span></a></div></div></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://avatars1.githubusercontent.com/u/27486511?s=460&amp;v=4" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">29</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">9</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">6</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> Categories</span></a></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#window-中-服务的启动和停止"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">window 中 服务的启动和停止</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#mysql-服务登录和退出"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">mysql 服务登录和退出</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#mysql-库的常用命令"><span class="toc_mobile_items-number">2.1.</span> <span class="toc_mobile_items-text">mysql 库的常用命令</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#mysql-创建表"><span class="toc_mobile_items-number">2.2.</span> <span class="toc_mobile_items-text">mysql 创建表</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#mysql-查询SELECT"><span class="toc_mobile_items-number">3.</span> <span class="toc_mobile_items-text">mysql 查询SELECT</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#mysql-SELECT条件查询-where"><span class="toc_mobile_items-number">4.</span> <span class="toc_mobile_items-text">mysql SELECT条件查询 where</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#分类"><span class="toc_mobile_items-number">4.1.</span> <span class="toc_mobile_items-text">分类</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#1-模糊查询like"><span class="toc_mobile_items-number">4.2.</span> <span class="toc_mobile_items-text">1.模糊查询like</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#2-模糊查询between-and"><span class="toc_mobile_items-number">4.3.</span> <span class="toc_mobile_items-text">2.模糊查询between and</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#3-模糊查询in"><span class="toc_mobile_items-number">4.4.</span> <span class="toc_mobile_items-text">3.模糊查询in</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#4-模糊查询is-null"><span class="toc_mobile_items-number">4.5.</span> <span class="toc_mobile_items-text">4.模糊查询is null</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#5-排序查询order-by"><span class="toc_mobile_items-number">4.6.</span> <span class="toc_mobile_items-text">5.排序查询order by</span></a></li></ol></li></ol><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#mysql常见函数"><span class="toc_mobile_items-number"></span> <span class="toc_mobile_items-text">mysql常见函数</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#单行函数"><span class="toc_mobile_items-number"></span> <span class="toc_mobile_items-text">单行函数</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#一-字符函数"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">一.字符函数</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#length"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">length</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#CONCAT-str1-str2-…"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">CONCAT(str1,str2,…)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#UPPER-str-大写-LOWER-str-小写"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">UPPER(str) 大写,LOWER(str) 小写</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#SUBSTR-str-FROM-pos-FOR-len-，SUBSTRING-str-FROM-pos-FOR-len"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">SUBSTR(str FROM pos FOR len)，SUBSTRING(str FROM pos FOR len)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#INSTR-str-substr"><span class="toc_mobile_items-number">1.5.</span> <span class="toc_mobile_items-text">INSTR(str,substr)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#TRIM-remstr-FROM-str"><span class="toc_mobile_items-number">1.6.</span> <span class="toc_mobile_items-text">TRIM([remstr FROM] str)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#lpad"><span class="toc_mobile_items-number">1.7.</span> <span class="toc_mobile_items-text">lpad</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#rpad"><span class="toc_mobile_items-number">1.8.</span> <span class="toc_mobile_items-text">rpad</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#REPLACE"><span class="toc_mobile_items-number">1.9.</span> <span class="toc_mobile_items-text">REPLACE</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#二-数学函数"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">二.数学函数</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ROUND-X"><span class="toc_mobile_items-number">2.1.</span> <span class="toc_mobile_items-text">ROUND(X)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ceil-向上取整，返回-gt-该的最小整数"><span class="toc_mobile_items-number">2.2.</span> <span class="toc_mobile_items-text">ceil 向上取整，返回&gt;=该的最小整数</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#floor-向下取整，返回-gt-的最大整数"><span class="toc_mobile_items-number">2.3.</span> <span class="toc_mobile_items-text">floor 向下取整，返回&gt;= 的最大整数</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#TRUNCATE-截断，第二位保留几位小数"><span class="toc_mobile_items-number">2.4.</span> <span class="toc_mobile_items-text">TRUNCATE 截断，第二位保留几位小数</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#mod-取余"><span class="toc_mobile_items-number">2.5.</span> <span class="toc_mobile_items-text">mod 取余</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#日期函数"><span class="toc_mobile_items-number">3.</span> <span class="toc_mobile_items-text">日期函数</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#now-返回当前系统的日期-时间"><span class="toc_mobile_items-number">3.1.</span> <span class="toc_mobile_items-text">now 返回当前系统的日期+时间</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#CURDATE-返回当前系统的日期"><span class="toc_mobile_items-number">3.2.</span> <span class="toc_mobile_items-text">CURDATE 返回当前系统的日期</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#CURTIME-返回当前系统的时间"><span class="toc_mobile_items-number">3.3.</span> <span class="toc_mobile_items-text">CURTIME 返回当前系统的时间</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#可以获取指定的部分，年，月，日，小时，分钟，秒"><span class="toc_mobile_items-number">3.4.</span> <span class="toc_mobile_items-text">可以获取指定的部分，年，月，日，小时，分钟，秒</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#STR-TO-DATE-str-format"><span class="toc_mobile_items-number">3.5.</span> <span class="toc_mobile_items-text">STR_TO_DATE(str,format)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#DATE-FORMAT-date-format"><span class="toc_mobile_items-number">3.6.</span> <span class="toc_mobile_items-text">DATE_FORMAT(date,format)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#DATEDIFF-expr1-expr2-两个时间的差"><span class="toc_mobile_items-number">3.7.</span> <span class="toc_mobile_items-text">DATEDIFF(expr1,expr2) 两个时间的差</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#其他函数"><span class="toc_mobile_items-number">4.</span> <span class="toc_mobile_items-text">其他函数</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#流程控制函数"><span class="toc_mobile_items-number">5.</span> <span class="toc_mobile_items-text">流程控制函数</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#if-if-else"><span class="toc_mobile_items-number">5.1.</span> <span class="toc_mobile_items-text">if ,if else</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#CASE-使用"><span class="toc_mobile_items-number">5.2.</span> <span class="toc_mobile_items-text">CASE 使用</span></a></li></ol></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#分组函数"><span class="toc_mobile_items-number"></span> <span class="toc_mobile_items-text">分组函数</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#sum-求和"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">sum 求和</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#avg-平均值"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">avg 平均值</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#max-最大值"><span class="toc_mobile_items-number">3.</span> <span class="toc_mobile_items-text">max 最大值</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#min-最小值"><span class="toc_mobile_items-number">4.</span> <span class="toc_mobile_items-text">min 最小值</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#count-计算个数"><span class="toc_mobile_items-number">5.</span> <span class="toc_mobile_items-text">count 计算个数</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#DISTINCT-搭配-实现去重"><span class="toc_mobile_items-number">6.</span> <span class="toc_mobile_items-text">DISTINCT 搭配 实现去重</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#分组查询"><span class="toc_mobile_items-number"></span> <span class="toc_mobile_items-text">分组查询</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#查询每个部门的平均工资"><span class="toc_mobile_items-number">0.1.</span> <span class="toc_mobile_items-text">查询每个部门的平均工资</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#查询每个工种的最高工资"><span class="toc_mobile_items-number">0.2.</span> <span class="toc_mobile_items-text">查询每个工种的最高工资</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#分组查询后筛选-HAVING"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">分组查询后筛选 HAVING</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#查询那个部门的员工数-gt-2"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">查询那个部门的员工数&gt;2</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#查询每个有奖金的员工的最高工资-gt-12000的工种编号和最高工资"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">查询每个有奖金的员工的最高工资&gt;12000的工种编号和最高工资</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#查询领导编号-gt-102-的每个领导手下的最低工资-gt-5000的领导编号是那个，以及最低工资-gt-5000"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">查询领导编号&gt;102 的每个领导手下的最低工资&gt;5000的领导编号是那个，以及最低工资&gt;5000</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#按多个字段分组"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">按多个字段分组</span></a></li></div></div></div><div id="body-wrap"><div id="web_bg" data-type="photo"></div><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#window-中-服务的启动和停止"><span class="toc-number">1.</span> <span class="toc-text">window 中 服务的启动和停止</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-服务登录和退出"><span class="toc-number">2.</span> <span class="toc-text">mysql 服务登录和退出</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql-库的常用命令"><span class="toc-number">2.1.</span> <span class="toc-text">mysql 库的常用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql-创建表"><span class="toc-number">2.2.</span> <span class="toc-text">mysql 创建表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-查询SELECT"><span class="toc-number">3.</span> <span class="toc-text">mysql 查询SELECT</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-SELECT条件查询-where"><span class="toc-number">4.</span> <span class="toc-text">mysql SELECT条件查询 where</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分类"><span class="toc-number">4.1.</span> <span class="toc-text">分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-模糊查询like"><span class="toc-number">4.2.</span> <span class="toc-text">1.模糊查询like</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-模糊查询between-and"><span class="toc-number">4.3.</span> <span class="toc-text">2.模糊查询between and</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-模糊查询in"><span class="toc-number">4.4.</span> <span class="toc-text">3.模糊查询in</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-模糊查询is-null"><span class="toc-number">4.5.</span> <span class="toc-text">4.模糊查询is null</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-排序查询order-by"><span class="toc-number">4.6.</span> <span class="toc-text">5.排序查询order by</span></a></li></ol></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql常见函数"><span class="toc-number"></span> <span class="toc-text">mysql常见函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#单行函数"><span class="toc-number"></span> <span class="toc-text">单行函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-字符函数"><span class="toc-number">1.</span> <span class="toc-text">一.字符函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#length"><span class="toc-number">1.1.</span> <span class="toc-text">length</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CONCAT-str1-str2-…"><span class="toc-number">1.2.</span> <span class="toc-text">CONCAT(str1,str2,…)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UPPER-str-大写-LOWER-str-小写"><span class="toc-number">1.3.</span> <span class="toc-text">UPPER(str) 大写,LOWER(str) 小写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SUBSTR-str-FROM-pos-FOR-len-，SUBSTRING-str-FROM-pos-FOR-len"><span class="toc-number">1.4.</span> <span class="toc-text">SUBSTR(str FROM pos FOR len)，SUBSTRING(str FROM pos FOR len)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#INSTR-str-substr"><span class="toc-number">1.5.</span> <span class="toc-text">INSTR(str,substr)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TRIM-remstr-FROM-str"><span class="toc-number">1.6.</span> <span class="toc-text">TRIM([remstr FROM] str)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lpad"><span class="toc-number">1.7.</span> <span class="toc-text">lpad</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rpad"><span class="toc-number">1.8.</span> <span class="toc-text">rpad</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#REPLACE"><span class="toc-number">1.9.</span> <span class="toc-text">REPLACE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-数学函数"><span class="toc-number">2.</span> <span class="toc-text">二.数学函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ROUND-X"><span class="toc-number">2.1.</span> <span class="toc-text">ROUND(X)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ceil-向上取整，返回-gt-该的最小整数"><span class="toc-number">2.2.</span> <span class="toc-text">ceil 向上取整，返回&gt;=该的最小整数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#floor-向下取整，返回-gt-的最大整数"><span class="toc-number">2.3.</span> <span class="toc-text">floor 向下取整，返回&gt;= 的最大整数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TRUNCATE-截断，第二位保留几位小数"><span class="toc-number">2.4.</span> <span class="toc-text">TRUNCATE 截断，第二位保留几位小数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mod-取余"><span class="toc-number">2.5.</span> <span class="toc-text">mod 取余</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日期函数"><span class="toc-number">3.</span> <span class="toc-text">日期函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#now-返回当前系统的日期-时间"><span class="toc-number">3.1.</span> <span class="toc-text">now 返回当前系统的日期+时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CURDATE-返回当前系统的日期"><span class="toc-number">3.2.</span> <span class="toc-text">CURDATE 返回当前系统的日期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CURTIME-返回当前系统的时间"><span class="toc-number">3.3.</span> <span class="toc-text">CURTIME 返回当前系统的时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可以获取指定的部分，年，月，日，小时，分钟，秒"><span class="toc-number">3.4.</span> <span class="toc-text">可以获取指定的部分，年，月，日，小时，分钟，秒</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#STR-TO-DATE-str-format"><span class="toc-number">3.5.</span> <span class="toc-text">STR_TO_DATE(str,format)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DATE-FORMAT-date-format"><span class="toc-number">3.6.</span> <span class="toc-text">DATE_FORMAT(date,format)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DATEDIFF-expr1-expr2-两个时间的差"><span class="toc-number">3.7.</span> <span class="toc-text">DATEDIFF(expr1,expr2) 两个时间的差</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他函数"><span class="toc-number">4.</span> <span class="toc-text">其他函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#流程控制函数"><span class="toc-number">5.</span> <span class="toc-text">流程控制函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#if-if-else"><span class="toc-number">5.1.</span> <span class="toc-text">if ,if else</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CASE-使用"><span class="toc-number">5.2.</span> <span class="toc-text">CASE 使用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分组函数"><span class="toc-number"></span> <span class="toc-text">分组函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#sum-求和"><span class="toc-number">1.</span> <span class="toc-text">sum 求和</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#avg-平均值"><span class="toc-number">2.</span> <span class="toc-text">avg 平均值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#max-最大值"><span class="toc-number">3.</span> <span class="toc-text">max 最大值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#min-最小值"><span class="toc-number">4.</span> <span class="toc-text">min 最小值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#count-计算个数"><span class="toc-number">5.</span> <span class="toc-text">count 计算个数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DISTINCT-搭配-实现去重"><span class="toc-number">6.</span> <span class="toc-text">DISTINCT 搭配 实现去重</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分组查询"><span class="toc-number"></span> <span class="toc-text">分组查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#查询每个部门的平均工资"><span class="toc-number">0.1.</span> <span class="toc-text">查询每个部门的平均工资</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询每个工种的最高工资"><span class="toc-number">0.2.</span> <span class="toc-text">查询每个工种的最高工资</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分组查询后筛选-HAVING"><span class="toc-number">1.</span> <span class="toc-text">分组查询后筛选 HAVING</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#查询那个部门的员工数-gt-2"><span class="toc-number">1.1.</span> <span class="toc-text">查询那个部门的员工数&gt;2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询每个有奖金的员工的最高工资-gt-12000的工种编号和最高工资"><span class="toc-number">1.2.</span> <span class="toc-text">查询每个有奖金的员工的最高工资&gt;12000的工种编号和最高工资</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询领导编号-gt-102-的每个领导手下的最低工资-gt-5000的领导编号是那个，以及最低工资-gt-5000"><span class="toc-number">1.3.</span> <span class="toc-text">查询领导编号&gt;102 的每个领导手下的最低工资&gt;5000的领导编号是那个，以及最低工资&gt;5000</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#按多个字段分组"><span class="toc-number">2.</span> <span class="toc-text">按多个字段分组</span></a></li></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(https://picsum.photos/seed/826/1920/600)"><div id="post-info"><div id="post-title"><div class="posttitle">mysql从入门到跑路</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 发表于 2020-04-15<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> 更新于 2020-06-20</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/mysql/">mysql</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon fa-fw" aria-hidden="true"></i><span>字数总计:</span><span class="word-count">2.8k</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon fa-fw" aria-hidden="true"></i><span>阅读时长: 11 分钟</span><div class="post-meta-pv-cv"><span class="post-meta__separator">|</span><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>阅读量:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="fa fa-comments-o post-meta__icon fa-fw" aria-hidden="true"></i><span>评论数:</span><a href="/2020/04/15/mysql/mysql_1/#post-comment" itemprop="discussionUrl"><span class="valine-comment-count comment-count" data-xid="/2020/04/15/mysql/mysql_1/" itemprop="commentCount"></span></a></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><h2 id="window-中-服务的启动和停止"><a href="#window-中-服务的启动和停止" class="headerlink" title="window 中 服务的启动和停止"></a>window 中 服务的启动和停止</h2><pre><code>net start 服务名（mysql）
+net stop 服务名（mysql）</code></pre><h2 id="mysql-服务登录和退出"><a href="#mysql-服务登录和退出" class="headerlink" title="mysql 服务登录和退出"></a>mysql 服务登录和退出</h2><pre><code>1.登录 
+mysql [-h主机名 -p端口号] -u用户名 -p密码
+2.退出
+exit或者ctrl+c
+3.数据库内查看数据库版本
+select version();</code></pre><h3 id="mysql-库的常用命令"><a href="#mysql-库的常用命令" class="headerlink" title="mysql 库的常用命令"></a>mysql 库的常用命令</h3><pre><code>1.显示所有库
+  show databases;
+2.选择库
+  use 库名;
+3.显示表
+  show tables;
+4.显示指定库内的表 
+  show tables from 库名;
+5.查看当前在那个库 
+  select database();
+6.查看表结构
+  desc 表名;
+7.注释 
+# 
+--</code></pre><h3 id="mysql-创建表"><a href="#mysql-创建表" class="headerlink" title="mysql 创建表"></a>mysql 创建表</h3><pre><code>create table 表名(
+id int,
+name varchar(20)
+);  </code></pre><h2 id="mysql-查询SELECT"><a href="#mysql-查询SELECT" class="headerlink" title="mysql 查询SELECT"></a>mysql 查询SELECT</h2><pre><code>1.单字段查询
+SELECT    `username` FROM upms_user;
+2.多字段查询
+SELECT    `username`,`phone` FROM upms_user;
+3.查询所有字段
+SELECT    * FROM upms_user;
+4. SELECT
+SELECT 100;
+SELECT &apos;100&apos;;
+SELECT 100%2;
+SELECT VERSION();
+5.起别名 
+5.1 方式一，as
+SELECT 100%2 as result;
+5.2 方式二
+SELECT 100%2 result;
+5.去除重复 distinct
+SELECT DISTINCT `department_id` FROM `employees`;
+6.+ 加号的作用 在mysql中只是运算符，不能做拼接
+7.数据多个字段拼接使用函数 CONCAT
+SELECT CONCAT(str1,str2,...)
+8.判断是否为null 
+SELECT department_id,IFNULL(department_id,1) AS asdepartment  from employees;</code></pre><h2 id="mysql-SELECT条件查询-where"><a href="#mysql-SELECT条件查询-where" class="headerlink" title="mysql SELECT条件查询 where"></a>mysql SELECT条件查询 where</h2><blockquote>
+<p>select 查询列表 from 表名 where 筛选条件</p>
+</blockquote>
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>一. 按条件表达式筛选</p>
+<blockquote>
+<p>条件运算符：&gt; &lt; = != &gt;= &lt;= &lt;&gt;</p>
+</blockquote>
+<p>二. 按逻辑表达式</p>
+<blockquote>
+<p>逻辑运算符： and or not  </p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-- 按条件表达式筛选</span><br><span class="line">-- 案例一 查询工资&gt; 12000的员工信息</span><br><span class="line">SELECT * FROM employees WHERE salary&gt;12000;</span><br><span class="line">-- 案例二 查询部门编号不等于90的员工名和部门编号</span><br><span class="line">SELECT last_name ,department_id FROM employees WHERE department_id&lt;&gt;90;</span><br><span class="line">-- 案例三 查询工资在10000到20000之间的员工名，工资，以及奖金</span><br><span class="line">SELECT last_name,salary,commission_pct FROM employees WHERE salary&gt;=10000 AND salary&lt;=20000;</span><br><span class="line">-- 案例四 查询部门编号不在90到110之间，或者工资高于15000的员工信息</span><br><span class="line">SELECT * FROM employees WHERE department_id&lt;90 OR department_id&gt;110 OR salary&gt;15000;</span><br></pre></td></tr></table></figure></div>
+
+<p>三. 模糊查询</p>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">like</td>
+<td align="left">和通配符（%:任意多个 _:任意单个字符） 配合使用</td>
+</tr>
+<tr>
+<td align="left">between and</td>
+<td align="left">含义：字段包含在一个区间 <br>特点：包含领界值</td>
+</tr>
+<tr>
+<td align="left">in</td>
+<td align="left">含义：判断某字段的值是否属于in 列表中的某一项 <br> 特点：in列表中的每一项类型必须相同</td>
+</tr>
+<tr>
+<td align="left">is null</td>
+<td align="left">含义：判断某项字符内容为null的，不能判断null</td>
+</tr>
+<tr>
+<td align="left">&lt;=&gt;</td>
+<td align="left">&lt;=&gt; 安全等于 等价于 = 可以判断null</td>
+</tr>
+</tbody></table>
+<h3 id="1-模糊查询like"><a href="#1-模糊查询like" class="headerlink" title="1.模糊查询like"></a>1.模糊查询like</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-- 1.查询员工名中包含字符a 的员工信息</span><br><span class="line">SELECT * FROM employees WHERE last_name LIKE &apos;%a%&apos;;</span><br><span class="line">-- 2.查询员工名第三个字符中包含字符n第5个包含l的员工信息</span><br><span class="line">SELECT * FROM employees WHERE last_name LIKE &apos;__n_l%&apos;;</span><br><span class="line">-- 3.查询员工名中第二个字符为_的员工名 （因为_是通配符需要转义）</span><br><span class="line">SELECT * FROM employees WHERE last_name LIKE &apos;_\_%&apos;;</span><br><span class="line">-- 3.查询员工名中第二个字符为_的员工名（指定$为转义字符 ESCAPE &apos;$&apos;）</span><br><span class="line">SELECT * FROM employees WHERE last_name LIKE &apos;_$_%&apos; ESCAPE &apos;$&apos;;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-模糊查询between-and"><a href="#2-模糊查询between-and" class="headerlink" title="2.模糊查询between and"></a>2.模糊查询between and</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-- 4 查询部门编号在100到120之间</span><br><span class="line">SELECT * FROM employees WHERE employee_id BETWEEN 100 AND 120;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="3-模糊查询in"><a href="#3-模糊查询in" class="headerlink" title="3.模糊查询in"></a>3.模糊查询in</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-- 5 员工的工种编号是IT_PROG,AD_VP,AD_PRES中的一个员工名和工种编号</span><br><span class="line">SELECT last_name,job_id FROM employees WHERE job_id = &apos;IT_PROG&apos; OR job_id = &apos;AD_VP&apos; OR job_id = &apos;AD_PRES&apos;;</span><br><span class="line">SELECT last_name,job_id FROM employees WHERE job_id IN(&apos;IT_PROG&apos;,&apos;AD_VP&apos;,&apos;AD_PRES&apos;);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-模糊查询is-null"><a href="#4-模糊查询is-null" class="headerlink" title="4.模糊查询is null"></a>4.模糊查询is null</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 6 查询没有奖金的员工姓名和奖金率</span><br><span class="line">SELECT last_name,commission_pct FROM employees WHERE commission_pct IS NULL;</span><br><span class="line">-- &lt;=&gt; 安全等于等价于 = 可以判断null</span><br><span class="line">SELECT last_name,commission_pct FROM employees WHERE commission_pct &lt;=&gt; NULL;</span><br><span class="line">-- 7 查询有奖金的员工姓名和奖金率</span><br><span class="line">SELECT last_name,commission_pct FROM employees WHERE commission_pct IS NOT NULL;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-排序查询order-by"><a href="#5-排序查询order-by" class="headerlink" title="5.排序查询order by"></a>5.排序查询order by</h3><blockquote>
+<p>SELECT * FROM <code>employees</code> WHERE   ORDER BY [asc(默认可以不写)|desc]<br>order by 子句一般放在查询语句的最后面，除limit子句</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> # 查询员工信息，要求工资从高到底排序</span><br><span class="line">SELECT * FROM `employees` ORDER BY salary DESC;</span><br><span class="line">SELECT * FROM `employees` ORDER BY salary;</span><br><span class="line"># 案例2 查询部门编号》=90的员工信息，按入职日期的先后排序</span><br><span class="line">SELECT * FROM `employees` WHERE `department_id` &gt;=90 ORDER BY `hiredate` ASC;</span><br><span class="line"># 案例3 按年薪的高低显示员工的信息和年薪【按表达式排序】</span><br><span class="line">SELECT *, salary*12*(1+IFNULL(`commission_pct`,0)) 年薪 FROM `employees` ORDER BY `salary`*12*(1+IFNULL(`commission_pct`,0)) DESC;</span><br><span class="line"># 案例4 按年薪的高低显示员工的信息和年薪【按别名排序】</span><br><span class="line">SELECT *, salary*12*(1+IFNULL(`commission_pct`,0)) 年薪 FROM `employees` ORDER BY 年薪 DESC;</span><br><span class="line"># 案例5 按姓名长度显示员工的信息和工资【按函数排序】</span><br><span class="line">SELECT LENGTH(last_name) AS 字节长度 , last_name,salary FROM `employees` ORDER BY LENGTH(last_name) DESC;</span><br><span class="line"># 案例6 查询员工信息，要求先按工资s升序排序，再按员工编号降序排序【按多个字段排序】</span><br><span class="line">SELECT * FROM `employees` ORDER BY salary ASC,`employee_id` DESC;</span><br></pre></td></tr></table></figure></div>
+
+<h1 id="mysql常见函数"><a href="#mysql常见函数" class="headerlink" title="mysql常见函数"></a>mysql常见函数</h1><blockquote>
+<p>功能：类似于 封装的方法。将一组逻辑封装在方法体中，对外暴露方法名。<br>作用：提高代码的重用性<br>调用：select 函数名(实参列表) [form 表]<br>特点：1.叫什么（函数名） 2.干什么（函数功能）<br>分类：1.单行函数 如：CONCAT(str1,str2,…),length,IFNULL(expr1,expr2)等<br>       1.1 字符函数 1.2 数学函数 1.3 日期函数 1.4 其他函数 1.5 流程控制函数<br>2.分组函数 功能：做统计使用，又称为统计函数，聚合函数，组函数<br>  分类  2.1 sum 求和 2.2avg 平均值 2.3 max最大值 2.4 min最小值 2.5 count 计算个数</p>
+</blockquote>
+<h1 id="单行函数"><a href="#单行函数" class="headerlink" title="单行函数"></a>单行函数</h1><h2 id="一-字符函数"><a href="#一-字符函数" class="headerlink" title="一.字符函数"></a>一.字符函数</h2><h3 id="length"><a href="#length" class="headerlink" title="length"></a>length</h3><blockquote>
+<p>获取长度  utf8 中文占3个字符 GBK中文占2个字符</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select LENGTH(&apos;john&apos;);</span><br><span class="line">SELECT LENGTH(&apos;中国&apos;);</span><br><span class="line">SHOW VARIABLES	LIKE &apos;%char%&apos;;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="CONCAT-str1-str2-…"><a href="#CONCAT-str1-str2-…" class="headerlink" title="CONCAT(str1,str2,…)"></a>CONCAT(str1,str2,…)</h3><blockquote>
+<p>拼接字符串</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select CONCAT(last_name,&apos;-&apos;,first_name) 姓名 from employees;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="UPPER-str-大写-LOWER-str-小写"><a href="#UPPER-str-大写-LOWER-str-小写" class="headerlink" title="UPPER(str) 大写,LOWER(str) 小写"></a>UPPER(str) 大写,LOWER(str) 小写</h3><blockquote>
+<p>大小写转换</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT LOWER(&apos;JOHN&apos;);</span><br><span class="line">SELECT UPPER(&apos;john&apos;);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="SUBSTR-str-FROM-pos-FOR-len-，SUBSTRING-str-FROM-pos-FOR-len"><a href="#SUBSTR-str-FROM-pos-FOR-len-，SUBSTRING-str-FROM-pos-FOR-len" class="headerlink" title="SUBSTR(str FROM pos FOR len)，SUBSTRING(str FROM pos FOR len)"></a>SUBSTR(str FROM pos FOR len)，SUBSTRING(str FROM pos FOR len)</h3><blockquote>
+<p> 截取字符长度 注意索引从1开始 </p>
+</blockquote>
+<blockquote>
+<p>截取从指定索引出后面的所有字符</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT SUBSTR(&apos;截取字符长度注意索引&apos;,1)  as &apos;截取&apos;;</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>截取从指定索引处指定字符长度的字符</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT SUBSTR(&apos;截取字符长度注意索引&apos;,1,5)  as &apos;截取&apos;;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="INSTR-str-substr"><a href="#INSTR-str-substr" class="headerlink" title="INSTR(str,substr)"></a>INSTR(str,substr)</h3><blockquote>
+<p>返回子串第一次出现的所在索引 注意：如果找不到返回0 </p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT INSTR(&apos;截取字符长度注意休息&apos;,&apos;休息&apos;) as out_put;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="TRIM-remstr-FROM-str"><a href="#TRIM-remstr-FROM-str" class="headerlink" title="TRIM([remstr FROM] str)"></a>TRIM([remstr FROM] str)</h3><blockquote>
+<p>去空格 </p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT LENGTH(TRIM(&apos;   张三  &apos;)) as out_put;</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>去除前后的指定字符</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT LENGTH(TRIM(&apos;a&apos; from &apos;aaa张三aaa&apos;)) as out_put;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="lpad"><a href="#lpad" class="headerlink" title="lpad"></a>lpad</h3><blockquote>
+<p>用指定的字符实现左填充指定的长度</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT LPAD(&apos;张三&apos;,10,&apos;$&apos;);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="rpad"><a href="#rpad" class="headerlink" title="rpad"></a>rpad</h3><blockquote>
+<p>用指定的字符实现右填充指定的长度</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT RPAD(&apos;张三&apos;,10,&apos;$&apos;);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="REPLACE"><a href="#REPLACE" class="headerlink" title="REPLACE"></a>REPLACE</h3><blockquote>
+<p>替换</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT REPLACE(&apos;张三爱上李四&apos;,&apos;李四&apos;,&apos;王五&apos;) AS out_put;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="二-数学函数"><a href="#二-数学函数" class="headerlink" title="二.数学函数"></a>二.数学函数</h2><h3 id="ROUND-X"><a href="#ROUND-X" class="headerlink" title="ROUND(X)"></a>ROUND(X)</h3><blockquote>
+<p>四舍五入</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT ROUND(4.51); </span><br><span class="line">ROUND(1.567,2) 第二个参数保留几位小数</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="ceil-向上取整，返回-gt-该的最小整数"><a href="#ceil-向上取整，返回-gt-该的最小整数" class="headerlink" title="ceil 向上取整，返回&gt;=该的最小整数"></a>ceil 向上取整，返回&gt;=该的最小整数</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT CEIL(1.10);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="floor-向下取整，返回-gt-的最大整数"><a href="#floor-向下取整，返回-gt-的最大整数" class="headerlink" title="floor 向下取整，返回&gt;= 的最大整数"></a>floor 向下取整，返回&gt;= 的最大整数</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT FLOOR(1.10);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="TRUNCATE-截断，第二位保留几位小数"><a href="#TRUNCATE-截断，第二位保留几位小数" class="headerlink" title="TRUNCATE 截断，第二位保留几位小数"></a>TRUNCATE 截断，第二位保留几位小数</h3><blockquote>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT TRUNCATE(1.10,2);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="mod-取余"><a href="#mod-取余" class="headerlink" title="mod 取余"></a>mod 取余</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT MOD(7,3);</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="日期函数"><a href="#日期函数" class="headerlink" title="日期函数"></a>日期函数</h2><h3 id="now-返回当前系统的日期-时间"><a href="#now-返回当前系统的日期-时间" class="headerlink" title="now 返回当前系统的日期+时间"></a>now 返回当前系统的日期+时间</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT NOW();</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="CURDATE-返回当前系统的日期"><a href="#CURDATE-返回当前系统的日期" class="headerlink" title="CURDATE 返回当前系统的日期"></a>CURDATE 返回当前系统的日期</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT CURDATE();</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="CURTIME-返回当前系统的时间"><a href="#CURTIME-返回当前系统的时间" class="headerlink" title="CURTIME 返回当前系统的时间"></a>CURTIME 返回当前系统的时间</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT CURTIME();</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="可以获取指定的部分，年，月，日，小时，分钟，秒"><a href="#可以获取指定的部分，年，月，日，小时，分钟，秒" class="headerlink" title="可以获取指定的部分，年，月，日，小时，分钟，秒"></a>可以获取指定的部分，年，月，日，小时，分钟，秒</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SELECT YEAR(NOW()) AS 年;</span><br><span class="line">SELECT YEAR(&apos;2020-1-1&apos;) AS 年;</span><br><span class="line">SELECT MONTH(&apos;2020-1-2&apos;) AS 月;</span><br><span class="line">SELECT DAY(&apos;2020-1-2&apos;) AS 日;</span><br><span class="line">SELECT HOUR(NOW()) AS 小时;</span><br><span class="line">SELECT MINUTE(NOW()) AS 分钟;</span><br><span class="line">SELECT SECOND(NOW()) AS 秒钟;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="STR-TO-DATE-str-format"><a href="#STR-TO-DATE-str-format" class="headerlink" title="STR_TO_DATE(str,format)"></a>STR_TO_DATE(str,format)</h3><blockquote>
+<p>将日期格式的字符转换成指定格式的日期</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select STR_TO_DATE(&apos;2020102&apos;,&apos;%Y%m%d&apos;); </span><br><span class="line"></span><br><span class="line">SELECT * from employees WHERE hiredate = STR_TO_DATE(&apos;4-3 1992&apos;,&apos;%c-%d %Y&apos;);</span><br></pre></td></tr></table></figure></div>
+
+<table>
+<thead>
+<tr>
+<th align="left">序号</th>
+<th align="left">格式符</th>
+<th align="left">功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">%Y</td>
+<td align="left">四位的年份</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">%y</td>
+<td align="left">2位的年份</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">%m</td>
+<td align="left">月份（01,02,03….）</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">%c</td>
+<td align="left">月份（1,2,3….）</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">%d</td>
+<td align="left">日（01,02,03….）</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">%H</td>
+<td align="left">小时(24小时)</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">%h</td>
+<td align="left">小时(12小时)</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">%i</td>
+<td align="left">分钟(00,01,…,59)</td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">%s</td>
+<td align="left">秒(00,01,…,59)</td>
+</tr>
+</tbody></table>
+<h3 id="DATE-FORMAT-date-format"><a href="#DATE-FORMAT-date-format" class="headerlink" title="DATE_FORMAT(date,format)"></a>DATE_FORMAT(date,format)</h3><blockquote>
+<p>将日期格式的字符转换成字符串</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT DATE_FORMAT(&apos;2020-1-2&apos;,&apos;%Y年%m月%d日&apos;);</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="DATEDIFF-expr1-expr2-两个时间的差"><a href="#DATEDIFF-expr1-expr2-两个时间的差" class="headerlink" title="DATEDIFF(expr1,expr2) 两个时间的差"></a>DATEDIFF(expr1,expr2) 两个时间的差</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT DATEDIFF(MAX(hiredate),MIN(hiredate)) FROM employees;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="其他函数"><a href="#其他函数" class="headerlink" title="其他函数"></a>其他函数</h2><blockquote>
+<p>数据库版本号<br>SELECT VERSION();<br>当前库名<br>SELECT DATABASE();<br>当前用户<br>SELECT USER();</p>
+</blockquote>
+<h2 id="流程控制函数"><a href="#流程控制函数" class="headerlink" title="流程控制函数"></a>流程控制函数</h2><h3 id="if-if-else"><a href="#if-if-else" class="headerlink" title="if ,if else"></a>if ,if else</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT IF(10&lt;5,&apos;大&apos;,&apos;小&apos;);</span><br><span class="line">SELECT last_name,commission_pct,IF(commission_pct IS NULL,&apos;没奖金&apos;,&apos;有奖金&apos;) AS 备注 FROM `employees`;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="CASE-使用"><a href="#CASE-使用" class="headerlink" title="CASE 使用"></a>CASE 使用</h3><pre><code>CASE 需要判断的字段或表达式
+WHEN 常量1 THEN 要显示的值或者语句1;
+WHEN 常量2 THEN 要显示的值或者语句2;
+ELSE  其他的 THEN 要显示的值;
+END;</code></pre><blockquote>
+<p>案例：查询员工的工资，要求<br>部门号=30 ，显示的工资是1.1倍<br>部门号=40 ，显示的工资是1.2倍<br>部门号=50 ，显示的工资是1.3倍<br>其他部门，显示为原工资</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">SELECT salary AS 原始工资,`department_id`,</span><br><span class="line">CASE `department_id`</span><br><span class="line">WHEN 30 THEN salary*1.1</span><br><span class="line">WHEN 40 THEN salary*1.2</span><br><span class="line">WHEN 50 THEN salary*1.3</span><br><span class="line">ELSE salary</span><br><span class="line">END AS 新工资 FROM `employees`;</span><br><span class="line"></span><br><span class="line">SELECT salary,</span><br><span class="line">CASE </span><br><span class="line">WHEN salary&gt;20000 THEN &apos;A&apos;</span><br><span class="line">WHEN salary&gt;15000 THEN &apos;b&apos;</span><br><span class="line">WHEN salary&gt;10000 THEN &apos;c&apos;</span><br><span class="line">ELSE &apos;D&apos;</span><br><span class="line">END AS 工资级别 FROM `employees`;</span><br></pre></td></tr></table></figure></div>
+
+<h1 id="分组函数"><a href="#分组函数" class="headerlink" title="分组函数"></a>分组函数</h1><blockquote>
+<p>参数支持哪些类型<br>sum 和 avg 只支持 数值类型并且忽略null<br>max 和 min 支持 任意类型的数值并且忽略null<br>count  忽略null<br>和 DISTINCT 搭配 实现去重<br>和分组函数一同查询的字段要求是 group by 后的字段</p>
+</blockquote>
+<h2 id="sum-求和"><a href="#sum-求和" class="headerlink" title="sum 求和"></a>sum 求和</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT SUM(salary) FROM employees;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="avg-平均值"><a href="#avg-平均值" class="headerlink" title="avg 平均值"></a>avg 平均值</h2><blockquote>
+<p>第二个值保留几位小数</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT AVG(salary,2) FROM employees;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="max-最大值"><a href="#max-最大值" class="headerlink" title="max 最大值"></a>max 最大值</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT MAX(salary) FROM employees;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="min-最小值"><a href="#min-最小值" class="headerlink" title="min 最小值"></a>min 最小值</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT min(salary) FROM employees;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="count-计算个数"><a href="#count-计算个数" class="headerlink" title="count 计算个数"></a>count 计算个数</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT count(salary) FROM employees;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="DISTINCT-搭配-实现去重"><a href="#DISTINCT-搭配-实现去重" class="headerlink" title="DISTINCT 搭配 实现去重"></a>DISTINCT 搭配 实现去重</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT SUM(DISTINCT salary),SUM(salary) FROM employees;</span><br><span class="line">SELECT COUNT(DISTINCT salary) FROM employees;</span><br></pre></td></tr></table></figure></div>
+
+<h1 id="分组查询"><a href="#分组查询" class="headerlink" title="分组查询"></a>分组查询</h1><pre><code>语法：
+SELECT 分组函数，列(要求出现在GROUP BY 的后面)
+FROM 表
+[where 筛选条件]
+GROUP BY 分组的列表
+[ORDER BY 排序子句]</code></pre><blockquote>
+<p>注意：查询列表必须特殊，要求是分组函数和group by 后出现的字段</p>
+</blockquote>
+<h3 id="查询每个部门的平均工资"><a href="#查询每个部门的平均工资" class="headerlink" title="查询每个部门的平均工资"></a>查询每个部门的平均工资</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT AVG(salary) FROM employees GROUP BY department_id;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="查询每个工种的最高工资"><a href="#查询每个工种的最高工资" class="headerlink" title="查询每个工种的最高工资"></a>查询每个工种的最高工资</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT MAX(salary),job_id FROM employees GROUP BY job_id;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="分组查询后筛选-HAVING"><a href="#分组查询后筛选-HAVING" class="headerlink" title="分组查询后筛选 HAVING"></a>分组查询后筛选 HAVING</h2><h3 id="查询那个部门的员工数-gt-2"><a href="#查询那个部门的员工数-gt-2" class="headerlink" title="查询那个部门的员工数&gt;2"></a>查询那个部门的员工数&gt;2</h3><blockquote>
+<p>方式1 HAVING  用于 GROUP BY 后面的筛选</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT COUNT(1) as total ,department_id FROM employees GROUP BY department_id  HAVING total&gt;2;</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>方式2 子查询的实现方法</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT tatal2.department_id,tatal2.total FROM (SELECT COUNT(1) as total ,department_id FROM employees GROUP BY department_id) as tatal2 WHERE tatal2.total&lt;2;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="查询每个有奖金的员工的最高工资-gt-12000的工种编号和最高工资"><a href="#查询每个有奖金的员工的最高工资-gt-12000的工种编号和最高工资" class="headerlink" title="查询每个有奖金的员工的最高工资&gt;12000的工种编号和最高工资"></a>查询每个有奖金的员工的最高工资&gt;12000的工种编号和最高工资</h3><blockquote>
+<p>原始表能查出来的用where  原始表查不出来的用 HAVING</p>
+</blockquote>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT MAX(salary) as _Max,job_id FROM employees WHERE commission_pct IS NOT NULL GROUP BY job_id HAVING _Max&gt;12000;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="查询领导编号-gt-102-的每个领导手下的最低工资-gt-5000的领导编号是那个，以及最低工资-gt-5000"><a href="#查询领导编号-gt-102-的每个领导手下的最低工资-gt-5000的领导编号是那个，以及最低工资-gt-5000" class="headerlink" title="查询领导编号&gt;102 的每个领导手下的最低工资&gt;5000的领导编号是那个，以及最低工资&gt;5000"></a>查询领导编号&gt;102 的每个领导手下的最低工资&gt;5000的领导编号是那个，以及最低工资&gt;5000</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">Code</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT MIN(salary) as dd,manager_id FROM employees WHERE manager_id&gt;102 GROUP BY manager_id HAVING dd&gt;5000;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="按多个字段分组"><a href="#按多个字段分组" class="headerlink" title="按多个字段分组"></a>按多个字段分组</h2></div></article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/mysql/">mysql    </a></div><div class="post_share"><div class="addthis_inline_share_toolbox"></div><script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=null" async></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/weixin.png" alt="微信"><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/zhifubao.png" alt="支付寶"><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="next-post pull-full"><a href="/2019/05/03/fornt/为什么代码没有按照编写顺序执行/"><img class="next_cover lazyload" data-src="https://picsum.photos/seed/812/1920/1080" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>为什么代码没有按照编写顺序执行？</span></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var notify = false == true ? true : false;
+var verify = false == true ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'uVOXa2k4yB5TEFMLQKDY7W82-gzGzoHsz',
+  appKey:'Hz5Hd3mYxb2qFFzOLWFiGwHx',
+  placeholder:'请输入',
+  avatar:'monsterid',
+  guest_info:guest_info,
+  pageSize:'10',
+  lang:'zh-cn',
+  recordIP: true
+});</script></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2015 - 2020 By 魔都叛徒</div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async></script></body></html>
